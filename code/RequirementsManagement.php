@@ -24,10 +24,12 @@ class FileSet extends DataObject
 		'Title' => 'Varchar(200)',
 		'Active' => 'Boolean',
 		'CombineFiles' => 'Boolean',
+		'IncludeOnMainSite' => 'Boolean'
 	);
 
 	public static $many_many = array(
-		'Files' => 'File'
+		'Files' => 'File',
+		'Subsites' => 'Subsite'
 	);
 
         public static $many_many_extraFields = array(
@@ -54,6 +56,18 @@ class FileSet extends DataObject
 			LiteralField::create('SortHelp', '<p>Order of files are important if there are dependencies between files</p>'),
 			GridField::create('SortFiles', 'File Order', $this->Files(), GridFieldConfig_RelationEditor::create()->addComponent(new GridFieldOrderableRows('SortOrder')))
 		));
+
+	        $fields->removeByName('Subsites');
+	        if (class_exists('Subsite') && Subsite::get()->count() > 0) {
+		        $subsites = Subsite::get()->map('ID', 'Title');
+		        $fields->addFieldsToTab('Root.Main', array(
+			        CheckboxField::create('IncludeOnMainSite', 'Include on main site?'),
+			        CheckboxSetField::create('Subsites', 'Subsites', $subsites
+			)));
+	        }
+	        else {
+		        $fields->removeByName('MainSite');
+	        }
 
                 return $fields;
         }
