@@ -83,7 +83,9 @@ class FileSet extends DataObject
 	public function getFileList() {
 		$return = array();
 		foreach ($this->Files() as $file) {
-			$return[] = $file->RelativeLink();
+			if ($file->Filename) {
+				$return[] = $file->RelativeLink();
+			}
 		}
 		return $return;
 	}
@@ -134,7 +136,9 @@ class CSSFileSet extends FileSet
 		}
 		else {
 			foreach ($this->getFileList() as $file) {
-				Requirements::css($file);
+				if (!empty($file)) {
+					Requirements::css($file);
+				}
 			}
 		}
 	}
@@ -166,7 +170,9 @@ class JSFileSet extends FileSet
 		}
 		else {
 			foreach ($this->getFileList() as $file) {
-				Requirements::javascript($file);
+				if (!empty($file)) {
+					Requirements::javascript($file);
+				}
 			}
 		}
 	}
